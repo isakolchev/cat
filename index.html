@@ -413,6 +413,23 @@
 
   .dragging-source { opacity: 0 !important; pointer-events: none; }
 
+  /* Drag handle */
+  .drag-handle {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    cursor: grab;
+    touch-action: none;
+    opacity: 0.3;
+  }
+  .drag-handle:active { cursor: grabbing; opacity: 0.6; }
+  .drag-handle svg { width: 16px; height: 16px; }
+
   /* Drop indicator */
   .drop-indicator {
     height: 2px;
@@ -937,23 +954,29 @@
   let ghostOffY       = 0;
   let activeIndicator = null;
 
-  // Long press
-  let longPressTimer  = null;
-  let pendingItem     = null;
-  let touchStartX     = 0;
-  let touchStartY     = 0;
-  let lastTouchX      = 0;
-  let lastTouchY      = 0;
-  let isScrolling     = false;  // finger moved — treat as manual scroll
-  let scrollStartTop  = 0;      // content.scrollTop saved at touchstart
-  const LONG_PRESS_MS = 450;
-  const CANCEL_MOVE   = 5;
+  let lastTouchX = 0;
+  let lastTouchY = 0;
 
   // Auto-scroll during drag
   let scrollRAF  = null;
   let scrollDir  = 0;
   const SCROLL_ZONE  = 90;
   const SCROLL_SPEED = 7;
+
+  // Add drag handle to every product item
+  document.querySelectorAll('.product-item').forEach(item => {
+    const handle = document.createElement('div');
+    handle.className = 'drag-handle';
+    handle.innerHTML = `<svg viewBox="0 0 16 16" fill="none">
+      <circle cx="5.5" cy="4" r="1.2" fill="currentColor"/>
+      <circle cx="10.5" cy="4" r="1.2" fill="currentColor"/>
+      <circle cx="5.5" cy="8" r="1.2" fill="currentColor"/>
+      <circle cx="10.5" cy="8" r="1.2" fill="currentColor"/>
+      <circle cx="5.5" cy="12" r="1.2" fill="currentColor"/>
+      <circle cx="10.5" cy="12" r="1.2" fill="currentColor"/>
+    </svg>`;
+    item.appendChild(handle);
+  });
 
   /* ── Helpers ────────────────────────────── */
 
@@ -1085,7 +1108,9 @@
   /* ── Mouse (desktop) ────────────────────── */
 
   document.addEventListener('mousedown', e => {
-    const item = e.target.closest('.product-item');
+    const handle = e.target.closest('.drag-handle');
+    if (!handle) return;
+    const item = handle.closest('.product-item');
     if (!item) return;
     e.preventDefault();
     startDrag(item, e.clientX, e.clientY);
@@ -1093,77 +1118,30 @@
   document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
   document.addEventListener('mouseup',   () => endDrag());
 
-  /* ── Touch (mobile) — long press ───────── */
+  /* ── Touch (mobile) — drag handle only ─── */
 
-  // Prevent native scroll on product items so we control scroll manually.
-  // This lets us properly distinguish scroll vs. long-press-drag on iOS.
   document.addEventListener('touchstart', e => {
-    const item = e.target.closest('.product-item');
+    const handle = e.target.closest('.drag-handle');
+    if (!handle) return;
+    const item = handle.closest('.product-item');
     if (!item) return;
 
-    e.preventDefault(); // take control — we'll scroll manually if needed
-
+    e.preventDefault(); // prevent scroll only when touching the handle
     const t = e.touches[0];
-    touchStartX = lastTouchX = t.clientX;
-    touchStartY = lastTouchY = t.clientY;
-    scrollStartTop = content.scrollTop;
-    isScrolling = false;
-    pendingItem = item;
-
-    clearTimeout(longPressTimer);
-    longPressTimer = setTimeout(() => {
-      if (pendingItem && !isScrolling) {
-        startDrag(pendingItem, touchStartX, touchStartY);
-        pendingItem = null;
-      }
-    }, LONG_PRESS_MS);
+    lastTouchX = t.clientX;
+    lastTouchY = t.clientY;
+    startDrag(item, t.clientX, t.clientY);
   }, { passive: false });
 
   document.addEventListener('touchmove', e => {
-    const t = e.touches[0];
-
-    if (!dragging) {
-      if (!pendingItem && !isScrolling) return;
-
-      const dx = Math.abs(t.clientX - touchStartX);
-      const dy = Math.abs(t.clientY - touchStartY);
-
-      if (dx > CANCEL_MOVE || dy > CANCEL_MOVE) {
-        // Finger moved — cancel long press, switch to manual scroll
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-        pendingItem = null;
-        isScrolling = true;
-      }
-
-      if (isScrolling) {
-        // Manual scroll: move content by delta Y
-        const deltaY = touchStartY - t.clientY;
-        content.scrollTop = scrollStartTop + deltaY;
-      }
-      return;
-    }
-
-    // Drag is active — prevent native scroll
+    if (!dragging) return;
     if (e.cancelable) e.preventDefault();
+    const t = e.touches[0];
     moveDrag(t.clientX, t.clientY);
   }, { passive: false });
 
-  document.addEventListener('touchend', () => {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-    pendingItem = null;
-    isScrolling = false;
-    if (dragging) endDrag();
-  });
-
-  document.addEventListener('touchcancel', () => {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-    pendingItem = null;
-    isScrolling = false;
-    if (dragging) endDrag();
-  });
+  document.addEventListener('touchend',    () => { if (dragging) endDrag(); });
+  document.addEventListener('touchcancel', () => { if (dragging) endDrag(); });
 
   /* ── Tabs ───────────────────────────────── */
   document.querySelectorAll('.tab').forEach(tab => {
