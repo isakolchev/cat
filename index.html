@@ -957,6 +957,7 @@
 
   // Auto-scroll during drag
   let scrollRAF  = null;
+  let scrollSpeed = 0;
   let scrollDir  = 0;
   const SCROLL_ZONE  = 90;
   const SCROLL_SPEED = 7;
@@ -1025,18 +1026,21 @@
     const viewH = window.innerHeight;
     if (cy < SCROLL_ZONE) {
       scrollDir = -1;
+      // Closer to top edge → faster (ratio 0..1)
+      scrollSpeed = 2 + 18 * Math.pow((SCROLL_ZONE - cy) / SCROLL_ZONE, 1.5);
     } else if (cy > viewH - SCROLL_ZONE) {
       scrollDir = 1;
+      scrollSpeed = 2 + 18 * Math.pow((cy - (viewH - SCROLL_ZONE)) / SCROLL_ZONE, 1.5);
     } else {
       scrollDir = 0;
+      scrollSpeed = 0;
     }
     if (scrollDir !== 0 && !scrollRAF) doScroll();
   }
 
   function doScroll() {
     if (!dragging || scrollDir === 0) { scrollRAF = null; return; }
-    content.scrollTop += scrollDir * SCROLL_SPEED;
-    // Re-evaluate indicator after scroll
+    content.scrollTop += scrollDir * scrollSpeed;
     updateIndicator(lastTouchX, lastTouchY);
     scrollRAF = requestAnimationFrame(doScroll);
   }
