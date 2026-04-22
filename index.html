@@ -1040,7 +1040,13 @@
 
   function doScroll() {
     if (!dragging || scrollDir === 0) { scrollRAF = null; return; }
-    content.scrollTop += scrollDir * scrollSpeed;
+    // Scroll whatever is actually scrollable (window or the content element)
+    const before = window.scrollY;
+    window.scrollBy(0, scrollDir * scrollSpeed);
+    if (window.scrollY === before) {
+      // Fallback for flex containers where content scrolls internally
+      content.scrollTop += scrollDir * scrollSpeed;
+    }
     updateIndicator(lastTouchX, lastTouchY);
     scrollRAF = requestAnimationFrame(doScroll);
   }
@@ -1055,36 +1061,34 @@
   function updateIndicator(cx, cy) {
     clearIndicators();
     const lists = Array.from(document.querySelectorAll('.product-list'));
-    let bestIndicator = null;
-    let bestDist = Infinity;
 
+    // Pick the closest list by vertical distance (ignore X entirely on narrow mobile)
+    let targetList = null;
+    let bestListDist = Infinity;
     lists.forEach(list => {
-      const listItems = Array.from(list.querySelectorAll(':scope > .product-item'));
-      const listInds  = Array.from(list.querySelectorAll(':scope > .drop-indicator'));
-      if (!listInds.length) return;
-
       const lr = list.getBoundingClientRect();
-      if (cx < lr.left - 40 || cx > lr.right + 40) return;
-
-      let slotIndex = 0;
-      for (let i = 0; i < listItems.length; i++) {
-        if (listItems[i] === dragging) continue;
-        const r = listItems[i].getBoundingClientRect();
-        if (cy > r.top + r.height / 2) slotIndex = i + 1;
-      }
-
-      const ind = listInds[Math.min(slotIndex, listInds.length - 1)];
-      if (ind) {
-        const r   = ind.getBoundingClientRect();
-        const midX = (lr.left + lr.right) / 2;
-        const d = Math.abs(cy - (r.top + r.height / 2)) + Math.abs(midX - cx) * 0.3;
-        if (d < bestDist) { bestDist = d; bestIndicator = ind; }
-      }
+      // vertical distance from cursor to list bounds (0 if inside)
+      const dy = cy < lr.top ? lr.top - cy : cy > lr.bottom ? cy - lr.bottom : 0;
+      if (dy < bestListDist) { bestListDist = dy; targetList = list; }
     });
+    if (!targetList) return;
 
-    if (bestIndicator) {
-      bestIndicator.classList.add('visible');
-      activeIndicator = bestIndicator;
+    const listItems = Array.from(targetList.querySelectorAll(':scope > .product-item'));
+    const listInds  = Array.from(targetList.querySelectorAll(':scope > .drop-indicator'));
+    if (!listInds.length) return;
+
+    // Determine slot: count items above cursor (excluding the dragging one)
+    let slotIndex = 0;
+    for (let i = 0; i < listItems.length; i++) {
+      if (listItems[i] === dragging) continue;
+      const r = listItems[i].getBoundingClientRect();
+      if (cy > r.top + r.height / 2) slotIndex = i + 1;
+    }
+
+    const ind = listInds[Math.min(slotIndex, listInds.length - 1)];
+    if (ind) {
+      ind.classList.add('visible');
+      activeIndicator = ind;
     }
   }
 
