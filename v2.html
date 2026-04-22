@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Список офферов — 995-100</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --content-primary: #222934;
+    --content-secondary: rgba(37,52,71,0.84);
+    --content-ghost: rgba(13,45,94,0.56);
+    --content-disabled: rgba(13,45,94,0.28);
+    --content-success: #3caa3c;
+    --bg-base-cover: #fff;
+    --bg-base-core: #f6f7f9;
+    --bg-base-disabled: rgba(13,45,94,0.04);
+    --bg-blue-secondary: rgba(0,127,255,0.16);
+    --bg-blue-outline-hover: rgba(0,127,255,0.08);
+    --bg-brand-primary: #007fff;
+    --border-secondary: rgba(13,45,94,0.08);
+    --border-primary: rgba(13,45,94,0.16);
+    --border-active: #007fff;
+    --border-subtle: rgba(13,45,94,0.04);
+    --text-accent: #007fff;
+    --text-primary: #222934;
+    --text-secondary: rgba(37,52,71,0.84);
+    --text-success: #3caa3c;
+    --shadow-general: 0px 2px 8px rgba(22,34,51,0.04), 0px 12px 24px rgba(22,34,51,0.06);
+  }
+
+  body {
+    font-family: 'PT Root UI', 'PT Root UI VF', system-ui, -apple-system, sans-serif;
+    background: var(--bg-base-cover);
+    max-width: 402px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    background: var(--bg-base-cover);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    flex-shrink: 0;
+  }
+
+  .btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+  .btn-icon:hover { background: var(--bg-base-core); }
+  .btn-icon svg { width: 20px; height: 20px; }
+
+  .header-name-wrap {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .offer-number {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    color: var(--content-primary);
+    padding: 0 4px;
+    white-space: nowrap;
+  }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 4px;
+    height: 18px;
+    border-radius: 8px;
+  }
+
+  .status-text {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--text-success);
+    white-space: nowrap;
+  }
+
+  .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-blue-secondary);
+    border: 0.75px solid var(--border-secondary);
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  /* ─── TABS ─── */
+  .tabs {
+    border-bottom: 1px solid var(--border-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 8px;
+    flex-shrink: 0;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    flex-shrink: 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16px;
+    color: var(--text-secondary);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--border-active);
+  }
+
+  /* ─── CONTENT ─── */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 32px;
+  }
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: rgba(13,45,94,0.2); border-radius: 2px; }
+
+  /* ─── GROUP HEADER ─── */
+  .group-header {
+    background: var(--bg-base-cover);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    padding: 24px 8px 0 16px;
+  }
+  .group-header-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .group-title {
+    flex: 1 0 0;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    color: var(--content-primary);
+    min-width: 0;
+  }
+  .group-title.disabled { color: var(--content-disabled); }
+  .group-comment {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--content-primary);
+    width: 100%;
+    padding-right: 8px;
+  }
+  .chevron-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+  .chevron-btn:hover { background: var(--bg-base-core); }
+  .chevron-btn svg { width: 20px; height: 20px; }
+
+  /* ─── PRODUCT LIST (drop zone) ─── */
+  .product-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  /* ─── ALTERNATIVES WRAP ─── */
+  .alternatives-wrap {
+    background: var(--bg-base-core);
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 32px;
+    width: 100%;
+  }
+
+  .alternatives-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 6px 4px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--content-ghost);
+    white-space: nowrap;
+  }
+
+  /* ─── PRODUCT ITEM ─── */
+  .product-item {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 16px 12px 2px;
+    width: 100%;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    background: transparent;
+    transition: opacity 0.15s;
+  }
+  .product-item:active { cursor: grabbing; }
+
+  .product-wrap {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .product-image {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    border: 1px solid var(--border-secondary);
+    flex-shrink: 0;
+    overflow: hidden;
+    position: relative;
+    background: #f0f2f5;
+  }
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .product-image.empty {
+    background: var(--bg-base-disabled);
+    border: 1px dashed var(--border-secondary);
+  }
+
+  .product-text {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .product-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .product-num, .product-sku {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--content-secondary);
+    white-space: nowrap;
+  }
+  .product-dot {
+    width: 8px;
+    height: 12px;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .product-dot::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--content-ghost);
+    position: absolute;
+    top: 2px;
+    left: 0;
+  }
+
+  .product-title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    color: var(--content-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  .product-description {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    color: var(--content-primary);
+    width: 100%;
+    margin-top: 2px;
+  }
+
+  .product-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    padding-right: 8px;
+    margin-top: 2px;
+  }
+  .product-pcs-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .product-qty {
+    flex: 1 0 0;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 18px;
+    color: var(--content-primary);
+    white-space: nowrap;
+  }
+  .product-discount {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    color: var(--content-secondary);
+    white-space: nowrap;
+  }
+  .product-old-price {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    color: var(--content-ghost);
+    white-space: nowrap;
+    font-feature-settings: 'lnum' 1, 'tnum' 1;
+  }
+  .product-price-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+  }
+  .product-price {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 18px;
+    color: var(--content-primary);
+    white-space: nowrap;
+    font-feature-settings: 'lnum' 1, 'tnum' 1;
+  }
+
+  /* ─── DND ─── */
+  .dragging-source .product-title {
+    -webkit-line-clamp: 1;
+    white-space: nowrap;
+  }
+  .dragging-source .product-description {
+    display: none;
+  }
+
+  .drag-ghost {
+    background: var(--bg-base-cover);
+    border-radius: 12px;
+    box-shadow: var(--shadow-general);
+    padding: 12px 16px;
+    pointer-events: none;
+    position: fixed;
+    z-index: 1000;
+    opacity: 0.96;
+  }
+  .drag-ghost .product-title {
+    -webkit-line-clamp: 1;
+    white-space: nowrap;
+  }
+  .drag-ghost .product-description { display: none; }
+
+  .dragging-source { opacity: 0 !important; pointer-events: none; }
+
+  /* Drag handle */
+  .drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    flex-shrink: 0;
+    cursor: grab;
+    touch-action: none;
+    opacity: 0.2;
+  }
+  .drag-handle:active { cursor: grabbing; opacity: 0.5; }
+  .drag-handle svg { width: 8px; height: 7px; }
+
+  /* Drag zone = handle + photo */
+  .drag-zone {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    touch-action: none;
+    cursor: grab;
+    align-self: flex-start;
+  }
+  .drag-zone:active { cursor: grabbing; }
+
+  /* Drop indicator */
+  .drop-indicator {
+    height: 2px;
+    background: var(--bg-brand-primary);
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0.1s;
+    flex-shrink: 0;
+  }
+  .drop-indicator.visible { opacity: 1; }
+
+  /* Empty drop zone hint */
+  .product-list:empty::after,
+  .product-list.drop-over-empty::after {
+    content: '';
+    display: block;
+    height: 40px;
+  }
+
+  /* ─── ADD ITEM BUTTONS ─── */
+  .add-item-wrap {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 16px 16px 0;
+    width: 100%;
+  }
+  .add-btn {
+    flex: 1 0 0;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    color: var(--text-accent);
+    background: none;
+    white-space: nowrap;
+  }
+  .add-btn:first-child { background: var(--bg-blue-outline-hover); }
+  .add-btn:hover { opacity: 0.8; }
+  .add-btn svg { width: 16px; height: 16px; }
+
+  /* ─── FINAL NUM ─── */
+  .final-num {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    padding: 0 24px;
+    width: 100%;
+  }
+  .final-num-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+  .final-amount {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    color: var(--content-primary);
+    white-space: nowrap;
+    font-feature-settings: 'lnum' 1, 'tnum' 1;
+  }
+
+  /* ─── BOTTOM CONTROL ─── */
+  .bottom-control {
+    background: var(--bg-base-core);
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 80px;
+    padding: 8px 8px 12px;
+    width: 100%;
+    flex-shrink: 0;
+  }
+  .bottom-control-center {
+    flex: 1 0 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  .bottom-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  .price-diff {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .price-diff-value {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 14px;
+    color: var(--text-success);
+    white-space: nowrap;
+  }
+  .pig-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .pig-value {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 14px;
+    color: var(--content-ghost);
+    white-space: nowrap;
+  }
+  .bottom-total {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    color: #1c1c1c;
+    white-space: nowrap;
+  }
+
+  /* ─── COLLAPSED GROUP ─── */
+  .group-collapsed-footer {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 8px 16px 0;
+    width: 100%;
+  }
+  .group-collapsed-images {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .group-collapsed-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    border: 0.83px solid #ebebeb;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .group-collapsed-img img { width: 100%; height: 100%; object-fit: cover; }
+  .swap-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .swap-btn svg { width: 16px; height: 16px; }
+  .avatar-count {
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    background: var(--bg-blue-secondary);
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--text-accent);
+  }
+  .group-collapsed-right {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .group-collapsed-amount-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    width: 100%;
+  }
+  .group-collapsed-amount {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    color: #1c1c1c;
+    white-space: nowrap;
+    font-feature-settings: 'lnum' 1, 'tnum' 1;
+  }
+
+  /* ─── NEW GROUP ─── */
+  .new-group-btn-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    width: 100%;
+  }
+  .new-group-btn {
+    flex: 1 0 0;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    color: var(--text-accent);
+    background: none;
+  }
+  .new-group-btn:hover { background: var(--bg-blue-outline-hover); }
+  .new-group-btn svg { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <button class="btn-icon">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M12 15L7 10L12 5" stroke="#222934" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="header-name-wrap">
+    <div class="offer-number">995-100</div>
+    <div class="status-badge">
+      <span class="status-text">Закрыто успешно</span>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5L9 4.5" stroke="#3caa3c" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+  <button class="btn-icon">
+    <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="4" r="1.5" fill="#222934"/><circle cx="10" cy="10" r="1.5" fill="#222934"/><circle cx="10" cy="16" r="1.5" fill="#222934"/></svg>
+  </button>
+  <div class="avatar"></div>
+  <button class="btn-icon">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" stroke="#222934" stroke-width="1.4"/><path d="M17 10c0-.4 0-.8-.05-1.2l1.7-1.3a.4.4 0 00.1-.5l-1.6-2.8a.4.4 0 00-.49-.17l-2 .8A7.3 7.3 0 0013.2 4l-.3-2.1A.4.4 0 0012.5 3.6h-3.2a.4.4 0 00-.4.34L8.6 4a7.3 7.3 0 00-1.46.85l-2-.8a.4.4 0 00-.49.17L3.05 7a.4.4 0 00.1.5l1.7 1.3A7 7 0 004.8 10c0 .4.02.8.07 1.2l-1.7 1.3a.4.4 0 00-.1.5l1.6 2.8c.1.18.3.24.49.17l2-.8c.44.33.93.6 1.45.85l.3 2.1c.05.2.22.35.4.35h3.2c.18 0 .35-.15.4-.35l.3-2.1a7.3 7.3 0 001.46-.85l2 .8c.19.07.39 0 .49-.17l1.6-2.8a.4.4 0 00-.1-.5L17.07 11.2A7 7 0 0017 10z" stroke="#222934" stroke-width="1.4"/></svg>
+  </button>
+</header>
+
+<!-- TABS -->
+<nav class="tabs">
+  <div class="tab active">Предложение</div>
+  <div class="tab">Описание</div>
+  <div class="tab">Доставки 3</div>
+  <div class="tab">Оплаты 6</div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="content" id="content">
+
+  <!-- ═══ GROUP 1 ═══ -->
+  <div class="group-header">
+    <div class="group-header-row">
+      <div class="group-title">Core Tire Service Equipment</div>
+      <button class="chevron-btn"><svg viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="#222934" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="group-comment">Комментарий для клиента. Essential machines for mounting, balancing, and handling tires in any professional workshop.</div>
+  </div>
+
+  <!-- Group 1: main items list -->
+  <div class="product-list" id="list-g1-main" data-group="g1-main" style="margin-top:-24px; background:#fff;">
+    <div class="drop-indicator"></div>
+    <div class="product-item" data-id="item-1-1">
+      <div class="product-wrap">
+        <div class="product-image"><img src="images/p1.jpeg" alt=""></div>
+        <div class="product-text">
+          <div class="product-meta"><span class="product-num">1.1</span><span class="product-sku">SKU-RED-XL-COTTON</span><span class="product-dot"></span></div>
+          <div class="product-title">GTE-H105 — Подъёмник электрогидравлический 4т 100-1820мм 2-х стоечный 220В ниж.синхрон.(механ. с 1 колонны) GTE — Двухстоечный подъёмник с механич</div>
+          <div class="product-pricing">
+            <div class="product-pcs-row"><span class="product-qty">120 000 шт.</span><span class="product-discount">-3,00%</span><span class="product-old-price">224 000,00 ₽</span></div>
+            <div class="product-price-row"><span class="product-price">210 000,00 ₽</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drop-indicator"></div>
+  </div>
+
+  <!-- Group 1: alternatives -->
+  <div class="alternatives-wrap">
+    <div class="alternatives-label">Альтернативные товары</div>
+
+    <!-- Static 1.2 (empty) – also draggable -->
+    <div class="product-list" id="list-g1-first" data-group="g1-first">
+      <div class="drop-indicator"></div>
+      <div class="product-item" data-id="item-1-2">
+        <div class="product-wrap">
+          <div class="product-image empty"></div>
+          <div class="product-text">
+            <div class="product-meta"><span class="product-num">1.2</span></div>
+            <div class="product-title">GTE-H120</div>
+            <div class="product-pricing">
+              <div class="product-pcs-row"><span class="product-qty">500 шт.</span><span class="product-discount">-3,00%</span><span class="product-old-price">224 000,00 ₽</span></div>
+              <div class="product-price-row"><span class="product-price">221 000,00 ₽</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drop-indicator"></div>
+    </div>
+
+    <!-- Draggable list -->
+    <div class="product-list" id="list-g1-alt" data-group="g1-alt">
+      <div class="drop-indicator"></div>
+
+      <div class="product-item" data-id="item-1-3">
+        <div class="product-wrap">
+          <div class="product-image"><img src="images/p2.jpg" alt=""></div>
+          <div class="product-text">
+            <div class="product-meta"><span class="product-num">1.3</span><span class="product-sku">SKU-RED-XL-COTTON</span><span class="product-dot"></span></div>
+            <div class="product-title">GTE-H105 — Подъёмник электрогидравлический 4т 100-1820мм 2-х стоечный 220В ниж.синхрон.(механ. с 1 колонны) GTE — Двухстоечный подъёмник с механич</div>
+            <div class="product-description">Профессиональный комплект для автодиагностики с расширенными функциями. Подходит для опытных пользователей.</div>
+            <div class="product-pricing">
+              <div class="product-pcs-row"><span class="product-qty">120 000 шт.</span><span class="product-discount">-98,00%</span><span class="product-old-price">224 000,00 ₽</span></div>
+              <div class="product-price-row"><span class="product-price">8 000,00 ₽</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drop-indicator"></div>
+
+      <div class="product-item" data-id="item-1-4">
+        <div class="product-wrap">
+          <div class="product-image"><img src="images/p3.png" alt=""></div>
+          <div class="product-text">
+            <div class="product-meta"><span class="product-num">1.4</span><span class="product-sku">SKU-BLUE-L-LEATHER</span><span class="product-dot"></span></div>
+            <div class="product-title">GTE-H206 — Подъёмник электрогидравлический 3т 120-2000мм 2-х стоечный 220В верх.синхрон.(механ. с 1 колонны)</div>
+            <div class="product-description">Компактный автодиагностический инструмент с основными функциями. Идеален для новичков.</div>
+            <div class="product-pricing">
+              <div class="product-pcs-row"><span class="product-qty">90 000 шт.</span><span class="product-price" style="margin-left:auto;">180 000,00 ₽</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drop-indicator"></div>
+
+      <div class="product-item" data-id="item-1-5">
+        <div class="product-wrap">
+          <div class="product-image"><img src="images/p4.jpeg" alt=""></div>
+          <div class="product-text">
+            <div class="product-meta"><span class="product-num">1.5</span><span class="product-sku">SKU-GREEN-M-PLASTIC</span></div>
+            <div class="product-title">GTE-H307 — Подъёмник электрогидравлический 5т 150-2200мм 2-х стоечный 220В ниж.синхрон.(механ. с 1 колонны)</div>
+            <div class="product-pricing">
+              <div class="product-pcs-row"><span class="product-qty">150 000 шт.</span><span class="product-price" style="margin-left:auto;">300 000,00 ₽</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drop-indicator"></div>
+
+      <div class="product-item" data-id="item-1-6">
+        <div class="product-wrap">
+          <div class="product-image"><img src="images/p5.jpeg" alt=""></div>
+          <div class="product-text">
+            <div class="product-meta"><span class="product-num">1.6</span><span class="product-sku">SKU-YELLOW-S-ALUMINUM</span></div>
+            <div class="product-title">GTE-H408 — Подъёмник электрогидравлический 2т 100-1500мм 2-х стоечный 220В ниж.синхрон.(механ. с 1 колонны)</div>
+            <div class="product-description">Удобный автоинструмент для быстрого диагностирования. Отличный выбор для автосервисов.</div>
+            <div class="product-pricing">
+              <div class="product-pcs-row"><span class="product-qty">70 000 шт.</span><span class="product-discount">-85,00%</span><span class="product-old-price">150 000,00 ₽</span></div>
+              <div class="product-price-row"><span class="product-price">5 000,00 ₽</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drop-indicator"></div>
+
+      <div class="product-item" data-id="item-1-7">
+        <div class="product-wrap">
+          <div class="product-image"><img src="images/p6.png" alt=""></div>
+          <div class="product-text">
+            <div class="product-meta"><span class="product-num">1.7</span><span class="product-sku">SKU-PURPLE-XL-STEEL</span><span class="product-dot"></span></div>
+            <div class="product-title">GTE-H509 — Подъёмник электрогидравлический 4т 120-1800мм 2-х стоечный 220В верх.синхрон.(механ. с 1 колонны)</div>
+            <div class="product-pricing">
+              <div class="product-pcs-row"><span class="product-qty">110 000 шт.</span><span class="product-price" style="margin-left:auto;">250 000,00 ₽</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drop-indicator"></div>
+
+      <div class="product-item" data-id="item-1-8">
+        <div class="product-wrap">
+          <div class="product-image"><img src="images/p1.jpeg" alt=""></div>
+          <div class="product-text">
+            <div class="product-meta"><span class="product-num">1.8</span><span class="product-sku">SKU-BROWN-M-COMPOSITE</span></div>
+            <div class="product-title">GTE-H610 — Подъёмник электрогидравлический 3т 110-1700мм 2-х стоечный 220В ниж.синхрон.(механ. с 1 колонны)</div>
+            <div class="product-pricing">
+              <div class="product-pcs-row"><span class="product-qty">80 000 шт.</span><span class="product-discount">-88,00%</span><span class="product-old-price">165 000,00 ₽</span></div>
+              <div class="product-price-row"><span class="product-price">5 500,00 ₽</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="drop-indicator"></div>
+    </div>
+  </div>
+
+  <!-- Add / Final / Bottom for Group 1 -->
+  <div class="add-item-wrap" style="margin-top:-24px;">
+    <button class="add-btn"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4" stroke="#007fff" stroke-width="1.4"/><path d="M10.5 10.5L14 14" stroke="#007fff" stroke-width="1.4" stroke-linecap="round"/></svg>Выбрать товары</button>
+    <button class="add-btn"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="#007fff" stroke-width="1.5" stroke-linecap="round"/></svg>Создать товар</button>
+  </div>
+  <div class="final-num">
+    <div class="final-num-row">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="rgba(13,45,94,0.56)" stroke-width="1.3"/><path d="M8 5V8.5M8 11V11.5" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <span class="final-amount">227 800,00 ₽</span>
+    </div>
+  </div>
+  <div class="bottom-control">
+    <button class="btn-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="#222934" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+    <div class="bottom-control-center">
+      <div class="bottom-info">
+        <div class="price-diff"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="#3caa3c"/><path d="M4 7L6.5 9.5L10 5" stroke="white" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="price-diff-value">52 000,00 ₽</span></div>
+        <div class="pig-wrap"><span style="font-size:14px;">🐷</span><span class="pig-value">800 000,00 ₽</span></div>
+      </div>
+      <div class="bottom-total">2 000 522 300,00 ₽</div>
+    </div>
+    <button class="btn-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M3 14V6M7 14V9M11 14V11M15 14V4" stroke="#222934" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+  </div>
+
+  <!-- ═══ GROUP 2 ═══ -->
+  <div class="group-header">
+    <div class="group-header-row">
+      <div class="group-title disabled">Название группы 2</div>
+      <button class="chevron-btn"><svg viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="#222934" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div class="group-comment">Комментарий для клиента. Essential machines for mounting, balancing, and handling tires in any professional workshop.</div>
+  </div>
+
+  <div class="product-list" id="list-g2" data-group="g2" style="margin-top:-24px; background:#fff;">
+    <div class="drop-indicator"></div>
+    <div class="product-item" data-id="item-2-1">
+      <div class="product-wrap">
+        <div class="product-image"><img src="images/p2.jpg" alt=""></div>
+        <div class="product-text">
+          <div class="product-meta"><span class="product-num">2.1</span></div>
+          <div class="product-title" style="font-weight:700; line-height:18px;">Название товара</div>
+          <div class="product-pricing">
+            <div class="product-pcs-row"><span class="product-qty">120 000 шт.</span><span class="product-price" style="margin-left:auto;">224 000,00 ₽</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="drop-indicator"></div>
+  </div>
+
+  <div class="add-item-wrap">
+    <button class="add-btn"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4" stroke="#007fff" stroke-width="1.4"/><path d="M10.5 10.5L14 14" stroke="#007fff" stroke-width="1.4" stroke-linecap="round"/></svg>Выбрать товары</button>
+    <button class="add-btn"><svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="#007fff" stroke-width="1.5" stroke-linecap="round"/></svg>Создать товар</button>
+  </div>
+  <div class="final-num">
+    <div class="final-num-row"><span class="final-amount">224 000,00 ₽</span></div>
+  </div>
+
+  <!-- ═══ GROUP 3 (collapsed) ═══ -->
+  <div class="group-header">
+    <div class="group-header-row" style="align-items:flex-start; gap:2px;">
+      <div class="group-title" style="flex:1 0 0; min-width:0;">Свёрнутая группа выглядит так<br>и её название тоже в три строки например вдруг как-никак</div>
+      <div style="height:28px; width:40px; flex-shrink:0; position:relative;">
+        <button class="chevron-btn" style="position:absolute; top:50%; right:0; transform:translateY(-50%);">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M15 12.5L10 7.5L5 12.5" stroke="#222934" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="group-comment">Комментарий для клиента. Essential machines for mounting, balancing, and handling tires in any professional workshop.</div>
+    <div class="group-collapsed-footer">
+      <div class="group-collapsed-images">
+        <div class="group-collapsed-img"><img src="https://www.figma.com/api/mcp/asset/d8a52dcf-8769-4b1b-80e8-478a3dc0fdbf" alt="" onerror="this.style.display='none'"></div>
+        <button class="swap-btn"><svg viewBox="0 0 16 16" fill="none"><path d="M11 3L14 6L11 9" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 13L2 10L5 7" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 6H6M2 10H10" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round"/></svg></button>
+        <div class="avatar-count">+29</div>
+      </div>
+      <div class="group-collapsed-right">
+        <div class="group-collapsed-amount-row">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="rgba(13,45,94,0.56)" stroke-width="1.3"/><path d="M7 4.5V7.5M7 9.5V10" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="group-collapsed-amount">2 300 443 000,00 ₽</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- New group -->
+  <div class="new-group-btn-wrap">
+    <button class="new-group-btn">
+      <svg viewBox="0 0 16 16" fill="none"><path d="M8 3V13M3 8H13" stroke="#007fff" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Новая группа
+    </button>
+  </div>
+
+</main>
+
+<!-- Ghost element -->
+<div class="drag-ghost" id="drag-ghost" style="display:none;"></div>
+
+<script>
+(function () {
+  const content = document.getElementById('content');
+  const ghost   = document.getElementById('drag-ghost');
+
+  let dragging        = null;
+  let ghostOffX       = 0;
+  let ghostOffY       = 0;
+  let activeIndicator = null;
+
+  let lastTouchX = 0;
+  let lastTouchY = 0;
+
+  // Auto-scroll during drag
+  let scrollRAF  = null;
+  let scrollSpeed = 0;
+  let scrollDir  = 0;
+  const SCROLL_ZONE  = 90;
+  const SCROLL_SPEED = 7;
+
+  // Add drag zone (handle + photo) to every product item
+  document.querySelectorAll('.product-item').forEach(item => {
+    const handle = document.createElement('div');
+    handle.className = 'drag-handle';
+    handle.innerHTML = `<svg viewBox="0 0 14 14" fill="none">
+      <rect y="0" width="14" height="2.5" rx="1.25" fill="currentColor"/>
+      <rect y="5.75" width="14" height="2.5" rx="1.25" fill="currentColor"/>
+      <rect y="11.5" width="14" height="2.5" rx="1.25" fill="currentColor"/>
+    </svg>`;
+
+    const imgEl = item.querySelector('.product-image');
+    const zone = document.createElement('div');
+    zone.className = 'drag-zone';
+    zone.appendChild(handle);
+    if (imgEl) zone.appendChild(imgEl);
+
+    const wrap = item.querySelector('.product-wrap');
+    wrap.prepend(zone);
+  });
+
+  /* ── Helpers ────────────────────────────── */
+
+  function clearIndicators() {
+    document.querySelectorAll('.drop-indicator.visible')
+      .forEach(el => el.classList.remove('visible'));
+    activeIndicator = null;
+  }
+
+  /* ── Start drag ─────────────────────────── */
+
+  function startDrag(item, cx, cy) {
+    dragging = item;
+    item.classList.add('dragging-source');
+
+    const wrap = item.querySelector('.product-wrap');
+    ghost.innerHTML = wrap.outerHTML;
+    const rect = item.getBoundingClientRect();
+    ghostOffX = cx - rect.left;
+    ghostOffY = cy - rect.top;
+    ghost.style.width   = rect.width + 'px';
+    ghost.style.display = 'block';
+    moveGhost(cx, cy);
+
+    if (navigator.vibrate) navigator.vibrate(40);
+  }
+
+  /* ── Move ───────────────────────────────── */
+
+  function moveDrag(cx, cy) {
+    if (!dragging) return;
+    lastTouchX = cx;
+    lastTouchY = cy;
+    moveGhost(cx, cy);
+    updateIndicator(cx, cy);
+    updateAutoScroll(cy);
+  }
+
+  function moveGhost(cx, cy) {
+    ghost.style.left = (cx - ghostOffX) + 'px';
+    ghost.style.top  = (cy - ghostOffY) + 'px';
+  }
+
+  /* ── Auto-scroll ────────────────────────── */
+
+  function updateAutoScroll(cy) {
+    const viewH = window.innerHeight;
+    if (cy < SCROLL_ZONE) {
+      scrollDir = -1;
+      // Closer to top edge → faster (ratio 0..1)
+      scrollSpeed = 2 + 18 * Math.pow((SCROLL_ZONE - cy) / SCROLL_ZONE, 1.5);
+    } else if (cy > viewH - SCROLL_ZONE) {
+      scrollDir = 1;
+      scrollSpeed = 2 + 18 * Math.pow((cy - (viewH - SCROLL_ZONE)) / SCROLL_ZONE, 1.5);
+    } else {
+      scrollDir = 0;
+      scrollSpeed = 0;
+    }
+    if (scrollDir !== 0 && !scrollRAF) doScroll();
+  }
+
+  function doScroll() {
+    if (!dragging || scrollDir === 0) { scrollRAF = null; return; }
+    // Scroll whatever is actually scrollable (window or the content element)
+    const before = window.scrollY;
+    window.scrollBy(0, scrollDir * scrollSpeed);
+    if (window.scrollY === before) {
+      // Fallback for flex containers where content scrolls internally
+      content.scrollTop += scrollDir * scrollSpeed;
+    }
+    updateIndicator(lastTouchX, lastTouchY);
+    scrollRAF = requestAnimationFrame(doScroll);
+  }
+
+  function stopAutoScroll() {
+    scrollDir = 0;
+    if (scrollRAF) { cancelAnimationFrame(scrollRAF); scrollRAF = null; }
+  }
+
+  /* ── Drop indicator ─────────────────────── */
+
+  function updateIndicator(cx, cy) {
+    clearIndicators();
+    const lists = Array.from(document.querySelectorAll('.product-list'));
+
+    // Pick the closest list by vertical distance (ignore X entirely on narrow mobile)
+    let targetList = null;
+    let bestListDist = Infinity;
+    lists.forEach(list => {
+      const lr = list.getBoundingClientRect();
+      // vertical distance from cursor to list bounds (0 if inside)
+      const dy = cy < lr.top ? lr.top - cy : cy > lr.bottom ? cy - lr.bottom : 0;
+      if (dy < bestListDist) { bestListDist = dy; targetList = list; }
+    });
+    if (!targetList) return;
+
+    const listItems = Array.from(targetList.querySelectorAll(':scope > .product-item'));
+    const listInds  = Array.from(targetList.querySelectorAll(':scope > .drop-indicator'));
+    if (!listInds.length) return;
+
+    // Determine slot: count items above cursor (excluding the dragging one)
+    let slotIndex = 0;
+    for (let i = 0; i < listItems.length; i++) {
+      if (listItems[i] === dragging) continue;
+      const r = listItems[i].getBoundingClientRect();
+      if (cy > r.top + r.height / 2) slotIndex = i + 1;
+    }
+
+    const ind = listInds[Math.min(slotIndex, listInds.length - 1)];
+    if (ind) {
+      ind.classList.add('visible');
+      activeIndicator = ind;
+    }
+  }
+
+  /* ── Renumber ───────────────────────────── */
+
+  function renumberItems() {
+    // Collect lists grouped by group number (g1, g2, ...) in DOM order
+    const groups = {};
+    document.querySelectorAll('.product-list').forEach(list => {
+      const m = (list.dataset.group || '').match(/^g(\d+)/);
+      if (!m) return;
+      const g = m[1];
+      if (!groups[g]) groups[g] = [];
+      groups[g].push(list);
+    });
+
+    Object.entries(groups).forEach(([g, lists]) => {
+      let n = 1;
+      lists.forEach(list => {
+        list.querySelectorAll(':scope > .product-item').forEach(item => {
+          const el = item.querySelector('.product-num');
+          if (el) el.textContent = `${g}.${n++}`;
+        });
+      });
+    });
+  }
+
+  /* ── End drag ───────────────────────────── */
+
+  function endDrag() {
+    if (!dragging) return;
+    stopAutoScroll();
+
+    if (activeIndicator) {
+      const parent = activeIndicator.parentNode;
+      parent.insertBefore(dragging, activeIndicator);
+      parent.insertBefore(activeIndicator, dragging);
+    }
+
+    ghost.style.display = 'none';
+    dragging.classList.remove('dragging-source');
+    clearIndicators();
+    dragging = null;
+    renumberItems();
+  }
+
+  /* ── Mouse (desktop) ────────────────────── */
+
+  document.addEventListener('mousedown', e => {
+    const zone = e.target.closest('.drag-zone');
+    if (!zone) return;
+    const item = zone.closest('.product-item');
+    if (!item) return;
+    e.preventDefault();
+    startDrag(item, e.clientX, e.clientY);
+  });
+  document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
+  document.addEventListener('mouseup',   () => endDrag());
+
+  /* ── Touch (mobile) — drag zone only ─── */
+
+  document.addEventListener('touchstart', e => {
+    const zone = e.target.closest('.drag-zone');
+    if (!zone) return;
+    const item = zone.closest('.product-item');
+    if (!item) return;
+
+    e.preventDefault();
+    const t = e.touches[0];
+    lastTouchX = t.clientX;
+    lastTouchY = t.clientY;
+    startDrag(item, t.clientX, t.clientY);
+  }, { passive: false });
+
+  document.addEventListener('touchmove', e => {
+    if (!dragging) return;
+    if (e.cancelable) e.preventDefault();
+    const t = e.touches[0];
+    moveDrag(t.clientX, t.clientY);
+  }, { passive: false });
+
+  document.addEventListener('touchend',    () => { if (dragging) endDrag(); });
+  document.addEventListener('touchcancel', () => { if (dragging) endDrag(); });
+
+  /* ── Tabs ───────────────────────────────── */
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+})();
+</script>
+</body>
+</html>
