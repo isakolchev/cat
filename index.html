@@ -932,33 +932,41 @@
   const content = document.getElementById('content');
   const ghost   = document.getElementById('drag-ghost');
 
-  let dragging      = null;   // source .product-item
-  let ghostOffX     = 0;
-  let ghostOffY     = 0;
-  let activeIndicator = null; // currently highlighted .drop-indicator
+  let dragging        = null;
+  let ghostOffX       = 0;
+  let ghostOffY       = 0;
+  let activeIndicator = null;
 
-  /* ── Helpers ───────────────────────────── */
+  // Long press
+  let longPressTimer  = null;
+  let pendingItem     = null;
+  let touchStartX     = 0;
+  let touchStartY     = 0;
+  let lastTouchX      = 0;
+  let lastTouchY      = 0;
+  const LONG_PRESS_MS = 380;
+  const CANCEL_MOVE   = 8; // px — cancel long press if moved more
 
-  function allItems() {
-    return Array.from(document.querySelectorAll('.product-item'));
-  }
+  // Auto-scroll
+  let scrollRAF  = null;
+  let scrollDir  = 0;
+  const SCROLL_ZONE  = 90;  // px from top/bottom edge
+  const SCROLL_SPEED = 7;
 
-  function allIndicators() {
-    return Array.from(document.querySelectorAll('.drop-indicator'));
-  }
+  /* ── Helpers ────────────────────────────── */
 
   function clearIndicators() {
-    allIndicators().forEach(el => el.classList.remove('visible'));
+    document.querySelectorAll('.drop-indicator.visible')
+      .forEach(el => el.classList.remove('visible'));
     activeIndicator = null;
   }
 
-  /* ── Start ─────────────────────────────── */
+  /* ── Start drag ─────────────────────────── */
 
   function startDrag(item, cx, cy) {
     dragging = item;
     item.classList.add('dragging-source');
 
-    // Build ghost from item's inner wrap
     const wrap = item.querySelector('.product-wrap');
     ghost.innerHTML = wrap.outerHTML;
     const rect = item.getBoundingClientRect();
@@ -967,16 +975,20 @@
     ghost.style.width   = rect.width + 'px';
     ghost.style.display = 'block';
     moveGhost(cx, cy);
-
     content.classList.add('dnd-active');
+
+    if (navigator.vibrate) navigator.vibrate(40);
   }
 
-  /* ── Move ──────────────────────────────── */
+  /* ── Move ───────────────────────────────── */
 
   function moveDrag(cx, cy) {
     if (!dragging) return;
+    lastTouchX = cx;
+    lastTouchY = cy;
     moveGhost(cx, cy);
     updateIndicator(cx, cy);
+    updateAutoScroll(cy);
   }
 
   function moveGhost(cx, cy) {
@@ -984,59 +996,60 @@
     ghost.style.top  = (cy - ghostOffY) + 'px';
   }
 
-  /* Find the best drop-indicator for cursor position */
+  /* ── Auto-scroll ────────────────────────── */
+
+  function updateAutoScroll(cy) {
+    const viewH = window.innerHeight;
+    if (cy < SCROLL_ZONE) {
+      scrollDir = -1;
+    } else if (cy > viewH - SCROLL_ZONE) {
+      scrollDir = 1;
+    } else {
+      scrollDir = 0;
+    }
+    if (scrollDir !== 0 && !scrollRAF) doScroll();
+  }
+
+  function doScroll() {
+    if (!dragging || scrollDir === 0) { scrollRAF = null; return; }
+    content.scrollTop += scrollDir * SCROLL_SPEED;
+    // Re-evaluate indicator after scroll
+    updateIndicator(lastTouchX, lastTouchY);
+    scrollRAF = requestAnimationFrame(doScroll);
+  }
+
+  function stopAutoScroll() {
+    scrollDir = 0;
+    if (scrollRAF) { cancelAnimationFrame(scrollRAF); scrollRAF = null; }
+  }
+
+  /* ── Drop indicator ─────────────────────── */
+
   function updateIndicator(cx, cy) {
     clearIndicators();
-
-    // Collect all items with their midpoints
-    const items = allItems().filter(it => it !== dragging);
-    const indicators = allIndicators();
-
-    // For each indicator, find if cursor is near it
-    // Strategy: for each product-list find which gap cursor is in
     const lists = Array.from(document.querySelectorAll('.product-list'));
-
     let bestIndicator = null;
     let bestDist = Infinity;
 
     lists.forEach(list => {
       const listItems = Array.from(list.querySelectorAll(':scope > .product-item'));
-      const listIndicators = Array.from(list.querySelectorAll(':scope > .drop-indicator'));
+      const listInds  = Array.from(list.querySelectorAll(':scope > .drop-indicator'));
+      if (!listInds.length) return;
 
-      if (!listIndicators.length) return;
+      const lr = list.getBoundingClientRect();
+      if (cx < lr.left - 40 || cx > lr.right + 40) return;
 
-      const listRect = list.getBoundingClientRect();
-      // Check if cursor is horizontally within this list (with some padding)
-      if (cx < listRect.left - 40 || cx > listRect.right + 40) return;
-
-      // Find which indicator slot the cursor is closest to vertically
-      if (listItems.length === 0) {
-        // Empty list — use first indicator
-        const ind = listIndicators[0];
-        if (ind) {
-          const r = ind.getBoundingClientRect();
-          const d = Math.abs(cy - (r.top + r.height / 2)) + Math.abs((listRect.left + listRect.right) / 2 - cx) * 0.1;
-          if (d < bestDist) { bestDist = d; bestIndicator = ind; }
-        }
-        return;
-      }
-
-      // There should be one more indicator than items
-      // indicators[0] = before item[0], indicators[i+1] = after item[i]
       let slotIndex = 0;
       for (let i = 0; i < listItems.length; i++) {
         if (listItems[i] === dragging) continue;
         const r = listItems[i].getBoundingClientRect();
-        if (cy > r.top + r.height / 2) {
-          slotIndex = i + 1;
-        }
+        if (cy > r.top + r.height / 2) slotIndex = i + 1;
       }
 
-      // Account for skipped dragging item
-      const ind = listIndicators[Math.min(slotIndex, listIndicators.length - 1)];
+      const ind = listInds[Math.min(slotIndex, listInds.length - 1)];
       if (ind) {
-        const r = ind.getBoundingClientRect();
-        const midX = (listRect.left + listRect.right) / 2;
+        const r   = ind.getBoundingClientRect();
+        const midX = (lr.left + lr.right) / 2;
         const d = Math.abs(cy - (r.top + r.height / 2)) + Math.abs(midX - cx) * 0.3;
         if (d < bestDist) { bestDist = d; bestIndicator = ind; }
       }
@@ -1048,13 +1061,13 @@
     }
   }
 
-  /* ── End ───────────────────────────────── */
+  /* ── End drag ───────────────────────────── */
 
   function endDrag() {
     if (!dragging) return;
+    stopAutoScroll();
 
     if (activeIndicator) {
-      // Insert dragging element before the indicator, then move indicator before dragging
       const parent = activeIndicator.parentNode;
       parent.insertBefore(dragging, activeIndicator);
       parent.insertBefore(activeIndicator, dragging);
@@ -1067,7 +1080,7 @@
     dragging = null;
   }
 
-  /* ── Mouse ─────────────────────────────── */
+  /* ── Mouse (desktop) ────────────────────── */
 
   document.addEventListener('mousedown', e => {
     const item = e.target.closest('.product-item');
@@ -1075,29 +1088,64 @@
     e.preventDefault();
     startDrag(item, e.clientX, e.clientY);
   });
-
   document.addEventListener('mousemove', e => moveDrag(e.clientX, e.clientY));
   document.addEventListener('mouseup',   () => endDrag());
 
-  /* ── Touch ─────────────────────────────── */
+  /* ── Touch (mobile) — long press ───────── */
 
   document.addEventListener('touchstart', e => {
     const item = e.target.closest('.product-item');
     if (!item) return;
+
     const t = e.touches[0];
-    startDrag(item, t.clientX, t.clientY);
+    touchStartX = lastTouchX = t.clientX;
+    touchStartY = lastTouchY = t.clientY;
+    pendingItem = item;
+
+    clearTimeout(longPressTimer);
+    longPressTimer = setTimeout(() => {
+      if (pendingItem) {
+        startDrag(pendingItem, touchStartX, touchStartY);
+        pendingItem = null;
+      }
+    }, LONG_PRESS_MS);
   }, { passive: true });
 
   document.addEventListener('touchmove', e => {
-    if (!dragging) return;
-    e.preventDefault();
     const t = e.touches[0];
+
+    if (!dragging) {
+      // Cancel long press if finger moved too much
+      const dx = Math.abs(t.clientX - touchStartX);
+      const dy = Math.abs(t.clientY - touchStartY);
+      if (dx > CANCEL_MOVE || dy > CANCEL_MOVE) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+        pendingItem = null;
+      }
+      return; // let scroll happen normally
+    }
+
+    // Drag is active — prevent scroll
+    if (e.cancelable) e.preventDefault();
     moveDrag(t.clientX, t.clientY);
   }, { passive: false });
 
-  document.addEventListener('touchend', () => endDrag());
+  document.addEventListener('touchend', () => {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+    pendingItem = null;
+    if (dragging) endDrag();
+  });
 
-  /* ── Tabs ──────────────────────────────── */
+  document.addEventListener('touchcancel', () => {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+    pendingItem = null;
+    if (dragging) endDrag();
+  });
+
+  /* ── Tabs ───────────────────────────────── */
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
