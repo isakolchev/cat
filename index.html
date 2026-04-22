@@ -944,13 +944,15 @@
   let touchStartY     = 0;
   let lastTouchX      = 0;
   let lastTouchY      = 0;
-  const LONG_PRESS_MS = 380;
-  const CANCEL_MOVE   = 3; // px — cancel long press on any movement
+  let isScrolling     = false;  // finger moved — treat as manual scroll
+  let scrollStartTop  = 0;      // content.scrollTop saved at touchstart
+  const LONG_PRESS_MS = 450;
+  const CANCEL_MOVE   = 5;
 
-  // Auto-scroll
+  // Auto-scroll during drag
   let scrollRAF  = null;
   let scrollDir  = 0;
-  const SCROLL_ZONE  = 90;  // px from top/bottom edge
+  const SCROLL_ZONE  = 90;
   const SCROLL_SPEED = 7;
 
   /* ── Helpers ────────────────────────────── */
@@ -1093,40 +1095,56 @@
 
   /* ── Touch (mobile) — long press ───────── */
 
+  // Prevent native scroll on product items so we control scroll manually.
+  // This lets us properly distinguish scroll vs. long-press-drag on iOS.
   document.addEventListener('touchstart', e => {
     const item = e.target.closest('.product-item');
     if (!item) return;
 
+    e.preventDefault(); // take control — we'll scroll manually if needed
+
     const t = e.touches[0];
     touchStartX = lastTouchX = t.clientX;
     touchStartY = lastTouchY = t.clientY;
+    scrollStartTop = content.scrollTop;
+    isScrolling = false;
     pendingItem = item;
 
     clearTimeout(longPressTimer);
     longPressTimer = setTimeout(() => {
-      if (pendingItem) {
+      if (pendingItem && !isScrolling) {
         startDrag(pendingItem, touchStartX, touchStartY);
         pendingItem = null;
       }
     }, LONG_PRESS_MS);
-  }, { passive: true });
+  }, { passive: false });
 
   document.addEventListener('touchmove', e => {
     const t = e.touches[0];
 
     if (!dragging) {
-      // Cancel long press if finger moved too much
+      if (!pendingItem && !isScrolling) return;
+
       const dx = Math.abs(t.clientX - touchStartX);
       const dy = Math.abs(t.clientY - touchStartY);
+
       if (dx > CANCEL_MOVE || dy > CANCEL_MOVE) {
+        // Finger moved — cancel long press, switch to manual scroll
         clearTimeout(longPressTimer);
         longPressTimer = null;
         pendingItem = null;
+        isScrolling = true;
       }
-      return; // let scroll happen normally
+
+      if (isScrolling) {
+        // Manual scroll: move content by delta Y
+        const deltaY = touchStartY - t.clientY;
+        content.scrollTop = scrollStartTop + deltaY;
+      }
+      return;
     }
 
-    // Drag is active — prevent scroll
+    // Drag is active — prevent native scroll
     if (e.cancelable) e.preventDefault();
     moveDrag(t.clientX, t.clientY);
   }, { passive: false });
@@ -1135,6 +1153,7 @@
     clearTimeout(longPressTimer);
     longPressTimer = null;
     pendingItem = null;
+    isScrolling = false;
     if (dragging) endDrag();
   });
 
@@ -1142,6 +1161,7 @@
     clearTimeout(longPressTimer);
     longPressTimer = null;
     pendingItem = null;
+    isScrolling = false;
     if (dragging) endDrag();
   });
 
