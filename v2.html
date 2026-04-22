@@ -155,6 +155,29 @@
   .content::-webkit-scrollbar-track { background: transparent; }
   .content::-webkit-scrollbar-thumb { background: rgba(13,45,94,0.2); border-radius: 2px; }
 
+  /* ─── GROUP DRAG ─── */
+  .group-drag-handle {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; flex-shrink: 0;
+    cursor: grab; touch-action: none;
+    opacity: 0.3; border: none; background: none; padding: 0;
+  }
+  .group-drag-handle:active { cursor: grabbing; opacity: 0.6; }
+  .group-drag-handle svg { width: 16px; height: 16px; }
+  .group-ghost {
+    position: fixed; z-index: 2000; pointer-events: none;
+    background: white; border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(22,34,51,0.14);
+    padding: 16px 20px; font-weight: 700; font-size: 17px;
+    color: #222934; opacity: 0.95; display: none;
+  }
+  .group-drop-indicator {
+    height: 2px; background: #007fff; margin: 0 16px;
+    border-radius: 1px; display: none;
+  }
+  .group-drop-indicator.visible { display: block; }
+  .group-dragging-source { opacity: 0.25; pointer-events: none; }
+
   /* ─── GROUP HEADER ─── */
   .group-header {
     background: var(--bg-base-cover);
@@ -573,7 +596,7 @@
   /* ─── COLLAPSED GROUP ─── */
   .group-collapsed-footer {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 8px;
     justify-content: flex-end;
     padding: 8px 16px 0;
@@ -1183,6 +1206,205 @@
 
   document.addEventListener('touchend',    () => { if (dragging) endDrag(); });
   document.addEventListener('touchcancel', () => { if (dragging) endDrag(); });
+
+  /* ── Group drag ─────────────────────────── */
+
+  const groupGhostEl = document.createElement('div');
+  groupGhostEl.className = 'group-ghost';
+  document.body.appendChild(groupGhostEl);
+
+  let groupDragging = null;
+  let activeGroupInd = null;
+  let groupGhostOffX = 0, groupGhostOffY = 0;
+
+  function buildGroups() {
+    const headers = Array.from(document.querySelectorAll('.group-header'));
+    return headers.map(header => {
+      const els = [header];
+      let el = header.nextElementSibling;
+      while (el && !el.classList.contains('group-header')) { els.push(el); el = el.nextElementSibling; }
+      return els;
+    });
+  }
+
+  function insertGroupDropIndicators() {
+    document.querySelectorAll('.group-drop-indicator').forEach(el => el.remove());
+    buildGroups().forEach(group => {
+      const ind = document.createElement('div');
+      ind.className = 'group-drop-indicator';
+      content.insertBefore(ind, group[0]);
+    });
+    const ind = document.createElement('div');
+    ind.className = 'group-drop-indicator';
+    content.appendChild(ind);
+  }
+
+  document.querySelectorAll('.group-header').forEach(header => {
+    const handle = document.createElement('button');
+    handle.className = 'group-drag-handle';
+    handle.innerHTML = `<svg viewBox="0 0 16 16" fill="none">
+      <circle cx="5.5" cy="4" r="1.2" fill="currentColor"/>
+      <circle cx="10.5" cy="4" r="1.2" fill="currentColor"/>
+      <circle cx="5.5" cy="8" r="1.2" fill="currentColor"/>
+      <circle cx="10.5" cy="8" r="1.2" fill="currentColor"/>
+      <circle cx="5.5" cy="12" r="1.2" fill="currentColor"/>
+      <circle cx="10.5" cy="12" r="1.2" fill="currentColor"/>
+    </svg>`;
+    const row = header.querySelector('.group-header-row');
+    if (row) row.appendChild(handle);
+  });
+
+  function startGroupDrag(header, cx, cy) {
+    const groups = buildGroups();
+    const group = groups.find(g => g[0] === header);
+    if (!group) return;
+    groupDragging = group;
+    group.forEach(el => el.classList.add('group-dragging-source'));
+    const title = header.querySelector('.group-title')?.textContent?.trim() || '';
+    groupGhostEl.textContent = title;
+    const rect = header.getBoundingClientRect();
+    groupGhostOffX = cx - rect.left;
+    groupGhostOffY = cy - rect.top;
+    groupGhostEl.style.width = rect.width + 'px';
+    groupGhostEl.style.display = 'block';
+    insertGroupDropIndicators();
+    moveGroupGhost(cx, cy);
+  }
+
+  function moveGroupGhost(cx, cy) {
+    groupGhostEl.style.left = (cx - groupGhostOffX) + 'px';
+    groupGhostEl.style.top  = (cy - groupGhostOffY) + 'px';
+  }
+
+  function updateGroupIndicator(cy) {
+    document.querySelectorAll('.group-drop-indicator').forEach(el => el.classList.remove('visible'));
+    activeGroupInd = null;
+    let best = null, bestDist = Infinity;
+    document.querySelectorAll('.group-drop-indicator').forEach(ind => {
+      const r = ind.getBoundingClientRect();
+      const d = Math.abs(cy - (r.top + r.height / 2));
+      if (d < bestDist) { bestDist = d; best = ind; }
+    });
+    if (best) { best.classList.add('visible'); activeGroupInd = best; }
+  }
+
+  function endGroupDrag() {
+    if (!groupDragging) return;
+    if (activeGroupInd) {
+      groupDragging.forEach(el => content.insertBefore(el, activeGroupInd));
+      content.insertBefore(activeGroupInd, groupDragging[0]);
+    }
+    groupDragging.forEach(el => el.classList.remove('group-dragging-source'));
+    groupGhostEl.style.display = 'none';
+    document.querySelectorAll('.group-drop-indicator').forEach(el => el.remove());
+    groupDragging = null;
+    activeGroupInd = null;
+  }
+
+  document.addEventListener('mousedown', e => {
+    const handle = e.target.closest('.group-drag-handle');
+    if (!handle) return;
+    const header = handle.closest('.group-header');
+    if (!header) return;
+    e.preventDefault();
+    startGroupDrag(header, e.clientX, e.clientY);
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!groupDragging) return;
+    moveGroupGhost(e.clientX, e.clientY);
+    updateGroupIndicator(e.clientY);
+  });
+
+  document.addEventListener('mouseup', () => { if (groupDragging) endGroupDrag(); });
+
+  document.addEventListener('touchstart', e => {
+    const handle = e.target.closest('.group-drag-handle');
+    if (!handle) return;
+    const header = handle.closest('.group-header');
+    if (!header) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    startGroupDrag(header, t.clientX, t.clientY);
+  }, { passive: false });
+
+  document.addEventListener('touchmove', e => {
+    if (!groupDragging) return;
+    if (e.cancelable) e.preventDefault();
+    const t = e.touches[0];
+    moveGroupGhost(t.clientX, t.clientY);
+    updateGroupIndicator(t.clientY);
+  }, { passive: false });
+
+  document.addEventListener('touchend',    () => { if (groupDragging) endGroupDrag(); });
+  document.addEventListener('touchcancel', () => { if (groupDragging) endGroupDrag(); });
+
+  /* ── Group collapse ─────────────────────── */
+
+  document.querySelectorAll('.group-header').forEach(header => {
+    const chevron = header.querySelector('.chevron-btn');
+    if (!chevron) return;
+
+    // Collect body elements (siblings until next .group-header)
+    const getBodyEls = () => {
+      const els = [];
+      let el = header.nextElementSibling;
+      while (el && !el.classList.contains('group-header')) {
+        els.push(el);
+        el = el.nextElementSibling;
+      }
+      return els;
+    };
+
+    const bodyEls = getBodyEls();
+    if (!bodyEls.length) return; // static collapsed group — skip
+
+    // Grab first product image src and total amount for collapsed footer
+    let imgSrc = '';
+    for (const el of bodyEls) {
+      const img = el.querySelector('.product-image img');
+      if (img) { imgSrc = img.src; break; }
+    }
+    let amount = '';
+    for (const el of bodyEls) {
+      const a = el.querySelector('.final-amount');
+      if (a) { amount = a.textContent; break; }
+    }
+    let itemCount = 0;
+    bodyEls.forEach(el => { itemCount += el.querySelectorAll('.product-item').length; });
+
+    // Build collapsed footer
+    const footer = document.createElement('div');
+    footer.className = 'group-collapsed-footer';
+    footer.style.display = 'none';
+    footer.innerHTML = `
+      <div class="group-collapsed-images">
+        ${imgSrc ? `<div class="group-collapsed-img"><img src="${imgSrc}" alt=""></div>` : ''}
+        <button class="swap-btn"><svg viewBox="0 0 16 16" fill="none"><path d="M11 3L14 6L11 9" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 13L2 10L5 7" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 6H6M2 10H10" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round"/></svg></button>
+        ${itemCount > 1 ? `<div class="avatar-count">+${itemCount - 1}</div>` : ''}
+      </div>
+      <div class="group-collapsed-right">
+        <div class="group-collapsed-amount-row">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="rgba(13,45,94,0.56)" stroke-width="1.3"/><path d="M7 4.5V7.5M7 9.5V10" stroke="rgba(13,45,94,0.56)" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="group-collapsed-amount">${amount}</span>
+        </div>
+      </div>`;
+    header.appendChild(footer);
+
+    let collapsed = false;
+
+    const setCollapsed = (val) => {
+      collapsed = val;
+      bodyEls.forEach(el => el.style.display = collapsed ? 'none' : '');
+      footer.style.display = collapsed ? '' : 'none';
+      const path = chevron.querySelector('svg path');
+      path.setAttribute('d', collapsed
+        ? 'M15 12.5L10 7.5L5 12.5'
+        : 'M5 7.5L10 12.5L15 7.5');
+    };
+
+    chevron.addEventListener('click', () => setCollapsed(!collapsed));
+  });
 
   /* ── Tabs ───────────────────────────────── */
   document.querySelectorAll('.tab').forEach(tab => {
